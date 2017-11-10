@@ -58,12 +58,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -fPIC")
 add_subdirectory(doc)
 
 
-
 ####################################
 # Module, library and executable definition
 ####################################
 
-set(MODULE_NAME "TObejct2JSON")
+set(MODULE_NAME "TObject2JSON")
 
 O2_SETUP(NAME ${MODULE_NAME})
 
@@ -75,7 +74,13 @@ configure_file("include/${MODULE_NAME}/Version.h.in"
         )
 
 O2_GENERATE_EXECUTABLE(
-        EXE_NAME "HelloRoot"
-        SOURCES "src/Hello"
-        BUCKET_NAME "o2_tobejct2json"
+        EXE_NAME "tobject2json"
+        SOURCES "src/main" "src/TObject2JSON.cpp"
+        BUCKET_NAME "o2_tobject2json"
+        )
+
+O2_GENERATE_EXECUTABLE(
+        EXE_NAME "test_zmq"
+        SOURCES "tests/test_zmq"
+        BUCKET_NAME "o2_test_zmq"
         )

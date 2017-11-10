@@ -7,8 +7,10 @@
 
 #  MYSQL_PATH_SUFFIXES  - by default it includes "mysql". Set it if you want to force extra suffixes to be used.
 
+Message(STATUS "Looking for MySQL...")
+
 if(NOT MYSQL_PATH_SUFFIXES)
-    set(MYSQL_PATH_SUFFIXES "" "mysql") 
+    set(MYSQL_PATH_SUFFIXES "" "mysql")
 endif()
 
 FIND_PATH(MYSQL_INCLUDE_DIRS mysql.h
@@ -16,10 +18,10 @@ FIND_PATH(MYSQL_INCLUDE_DIRS mysql.h
   /usr/include/mysql
 )
 
-SET(MYSQL_NAMES mysqlclient mysqlclient_r)
+SET(MYSQL_NAMES libmysqlcppconn.dylib libmysqlcppconn.so  libmysqlcppconn.dylib)
 FIND_LIBRARY(MYSQL_LIBRARY
   NAMES ${MYSQL_NAMES}
-  PATHS /usr/lib /usr/lib64 /usr/local/lib 
+  PATHS /usr/lib /usr/lib64 /usr/local/lib
   PATH_SUFFIXES ${MYSQL_PATH_SUFFIXES}
 )
 
