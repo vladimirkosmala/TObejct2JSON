@@ -25,6 +25,9 @@ make -j
 ~~~
 . /Applications/root_v6.10.08/bin/thisroot.sh
 xcode-select --install
+ssh -L 3306:127.0.0.1:3306 root@mysqlserverhost OR start sql locally
+./build/bin/tobject2json
+./bin/test_zmq
 ~~~
 
 
