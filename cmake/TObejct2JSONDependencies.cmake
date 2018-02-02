@@ -1,3 +1,4 @@
+find_package(Boost 1.58 REQUIRED)
 find_package(MySQL REQUIRED)
 find_package(ROOT 6.06.02 COMPONENTS RMySQL REQUIRED)
 find_package(CURL REQUIRED)
@@ -22,6 +23,7 @@ o2_define_bucket(
   ${Common_LIBRARIES}
 
   SYSTEMINCLUDE_DIRECTORIES
+  ${Boost_INCLUDE_DIRS}
   ${ROOT_INCLUDE_DIR}
   ${CURL_INCLUDE_DIRS}
   ${MYSQL_INCLUDE_DIR}
