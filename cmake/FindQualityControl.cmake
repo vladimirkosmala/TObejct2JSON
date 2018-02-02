@@ -24,15 +24,16 @@ endif (NOT QUALITYCONTROL_ROOT)
 # Find headers
 find_path(
   QUALITY_CONTROL_INCLUDE_DIRS
-  QualityControl/MonitorObject.h
-  "${QUALITYCONTROL_ROOT}/include"
+  NAMES QualityControl/MonitorObject.h
+  HINTS "${QUALITYCONTROL_ROOT}/include" ENV LD_LIBRARY_PATH
+  PATH_SUFFIXES "../include"
 )
 
 # Find libraries
 find_library(
   QUALITY_CONTROL_LIBRARY
-  libQualityControl.dylib
-  "${QUALITYCONTROL_ROOT}/lib"
+  NAMES "libQualityControl.dylib" "libQualityControl.so"
+  HINTS "${QUALITYCONTROL_ROOT}/lib" ENV LD_LIBRARY_PATH
 )
 
 if (QUALITY_CONTROL_INCLUDE_DIRS)
