@@ -39,7 +39,9 @@ o2_define_bucket(
 
   DEPENDENCIES
   ${ZeroMQ_LIBRARY_STATIC}
+  ${Common_LIBRARIES}
 
   SYSTEMINCLUDE_DIRECTORIES
   ${ZeroMQ_INCLUDE_DIR}
+  ${Common_INCLUDE_DIRS}
 )
