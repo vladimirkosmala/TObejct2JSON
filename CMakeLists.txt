@@ -53,7 +53,7 @@ ELSE ()
 ENDIF ()
 
 # Add compiler flags for warnings and (more importantly) fPIC and debug symbols
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -fPIC -pthread")
 
 add_subdirectory(doc)
 

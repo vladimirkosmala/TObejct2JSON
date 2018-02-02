@@ -44,4 +44,5 @@ o2_define_bucket(
   SYSTEMINCLUDE_DIRECTORIES
   ${ZeroMQ_INCLUDE_DIR}
   ${Common_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
