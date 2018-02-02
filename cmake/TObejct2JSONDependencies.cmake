@@ -1,8 +1,13 @@
+find_package(MySQL REQUIRED)
 find_package(ROOT 6.06.02 COMPONENTS RMySQL REQUIRED)
 find_package(CURL REQUIRED)
 find_package(ZeroMQ REQUIRED)
 find_package(QualityControl REQUIRED)
 find_package(Common REQUIRED)
+
+if (NOT MYSQL_FOUND)
+    message(WARNING "MySQL not found, the corresponding classes won't be built.")
+endif ()
 
 o2_define_bucket(
   NAME
