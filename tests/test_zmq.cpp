@@ -5,6 +5,9 @@
 // O2
 #include "Common/Exceptions.h"
 
+// QualityControl
+#include "QualityControl/QcInfoLogger.h"
+
 using namespace std;
 using namespace AliceO2::Common;
 

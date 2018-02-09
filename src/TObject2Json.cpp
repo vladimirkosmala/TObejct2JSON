@@ -19,6 +19,7 @@
 // QualityControl
 #include "QualityControl/MonitorObject.h"
 #include "QualityControl/MySqlDatabase.h"
+#include "QualityControl/QcInfoLogger.h"
 
 // ZMQ
 #include <zmq.h>
@@ -67,11 +68,11 @@ string TObject2Json::retrieveMonitorObjectJson(string agentName, string objectNa
 
 string TObject2Json::handleRequest(string request)
 {
-  cout << "Debug: Received request: " << request << endl;
+  QcInfoLogger::GetInstance() << "Debug: Received request: " << request << infologger::endm;
 
   // Check empty messagae
   if (request.length() == 0) {
-    cout << "Warning: empty request received, ignoring" << endl;
+    QcInfoLogger::GetInstance() << "Warning: empty request received, ignoring" << infologger::endm;
     return "";
   }
 
@@ -81,9 +82,9 @@ string TObject2Json::handleRequest(string request)
 
   // Handle commands
   if (parts[0] == "getobject") {
-    cout << "Debug: getobject command to handle" << endl;
+    QcInfoLogger::GetInstance() << "Debug: getobject command to handle" << infologger::endm;
     if (parts.size() != 3) {
-      cout << "Warning: getobject command needs 3 argument" << endl;
+      QcInfoLogger::GetInstance() << "Warning: getobject command needs 3 argument" << infologger::endm;
     }
     string agentName = parts[1];
     string objectName = parts[2];
@@ -98,10 +99,10 @@ string TObject2Json::handleRequest(string request)
       return "500 unhandled error";
     }
   } else if (parts[0] == "ping") {
-    cout << "Debug: ping command to handle" << endl;
+    QcInfoLogger::GetInstance() << "Debug: ping command to handle" << infologger::endm;
     return "pong";
   } else {
-    cout << "Warning: unknown command to handle" << endl;
+    QcInfoLogger::GetInstance() << "Warning: unknown command to handle" << infologger::endm;
     return "";
   }
 }
@@ -112,7 +113,7 @@ void TObject2Json::startZmqServer(string endpoint)
   void *socket = zmq_ctx_new();
   void *responder = zmq_socket(socket, ZMQ_REP);
 
-  cout << "Info: ZMQ server: Binding" << endl;
+  QcInfoLogger::GetInstance() << "Info: ZMQ server: Binding" << infologger::endm;
   result = zmq_bind(responder, endpoint.data());
   if (result != 0) {
     string details;
@@ -121,7 +122,7 @@ void TObject2Json::startZmqServer(string endpoint)
     BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
   }
 
-  cout << "Info: ZMQ server: listening requests..." << endl;
+  QcInfoLogger::GetInstance() << "Info: ZMQ server: listening requests..." << infologger::endm;
   while(1) {
     zmq_msg_t message;
 
