@@ -15,14 +15,24 @@ using namespace std;
 using namespace AliceO2::Common;
 using namespace o2::quality_control::core;
 
-int main (void) {
+int main (int argc, char *argv[]) {
   int error, size;
+  std::string zmqEndpoint;
+
+  // Arguments parsing
+  if (argc != 2) {
+    QcInfoLogger::GetInstance() << "Info: no configuration passed, default used. "
+                                << "Usage: cmd [zmqURI]" << infologger::endm;
+    zmqEndpoint = "tcp://127.0.0.1:5555";
+  } else {
+    zmqEndpoint = argv[1];
+  }
 
   try {
     // Open a socket
     void *context = zmq_ctx_new();
     void *socket = zmq_socket(context, ZMQ_REQ);
-    error = zmq_connect(socket, "tcp://127.0.0.1:5555");
+    error = zmq_connect(socket, zmqEndpoint.data());
     if (error) {
       string details;
       details += "Unable to connect zmq: ";
