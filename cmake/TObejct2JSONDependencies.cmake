@@ -1,9 +1,14 @@
-find_package(MYSQL REQUIRED)
+find_package(Boost 1.58 REQUIRED)
+find_package(MySQL REQUIRED)
 find_package(ROOT 6.06.02 COMPONENTS RMySQL REQUIRED)
 find_package(CURL REQUIRED)
 find_package(ZeroMQ REQUIRED)
 find_package(QualityControl REQUIRED)
 find_package(Common REQUIRED)
+
+if (NOT MYSQL_FOUND)
+    message(WARNING "MySQL not found, the corresponding classes won't be built.")
+endif ()
 
 o2_define_bucket(
   NAME
@@ -18,9 +23,10 @@ o2_define_bucket(
   ${Common_LIBRARIES}
 
   SYSTEMINCLUDE_DIRECTORIES
+  ${Boost_INCLUDE_DIRS}
   ${ROOT_INCLUDE_DIR}
-  ${MYSQL_INCLUDE_DIRS}
   ${CURL_INCLUDE_DIRS}
+  ${MYSQL_INCLUDE_DIR}
   ${ZeroMQ_INCLUDE_DIR}
   ${QUALITY_CONTROL_INCLUDE_DIRS}
   ${Common_INCLUDE_DIRS}
@@ -33,7 +39,10 @@ o2_define_bucket(
 
   DEPENDENCIES
   ${ZeroMQ_LIBRARY_STATIC}
+  ${Common_LIBRARIES}
 
   SYSTEMINCLUDE_DIRECTORIES
   ${ZeroMQ_INCLUDE_DIR}
+  ${Common_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )

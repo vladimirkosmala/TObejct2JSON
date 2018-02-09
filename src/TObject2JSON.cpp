@@ -11,7 +11,7 @@
 #include "QualityControl/MySqlDatabase.h"
 
 // ZMQ
-#include <zmq.hpp>
+#include <zmq.h>
 
 // Boost
 #include <boost/algorithm/string.hpp>
@@ -95,31 +95,39 @@ string TObject2JSON::handleRequest(string request)
 
 void TObject2JSON::startZmqServer(string endpoint)
 {
-  zmq::context_t context(numberOfContextThread);
-  zmq::socket_t socket(context, ZMQ_REP);
-  try {
-    cout << "Info: ZMQ server: Binding" << endl;
-    socket.bind(endpoint);
-  } catch (zmq::error_t err) {
+  int result;
+  void *socket = zmq_ctx_new();
+  void *responder = zmq_socket(socket, ZMQ_REP);
+
+  cout << "Info: ZMQ server: Binding" << endl;
+  result = zmq_bind(responder, endpoint.data());
+  if (result != 0) {
     string details;
     details += "Unable to bind zmq socket: ";
-    details += err.what();
+    details += zmq_strerror(zmq_errno());
     BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
   }
 
   cout << "Info: ZMQ server: listening requests..." << endl;
-  while (true) {
-    zmq::message_t message;
+  while(1) {
+    zmq_msg_t message;
 
-    //  Wait for next request from client inside a zmq message
-    socket.recv(&message);
-    string request((const char*)message.data(), message.size());
+    // Wait for next request from client inside a zmq message
+    zmq_msg_init(&message);
+    zmq_msg_recv(&message, socket, 0);
 
-    // Process
+    // Process message
+    string request((const char*)zmq_msg_data(&message), zmq_msg_size(&message));
     string response = handleRequest(request);
 
-    // Send back reponse inside a zmq message
-    message.rebuild(response.data(), response.size());
-    socket.send(message);
+    // Send back response inside a zmq message
+    zmq_msg_init_data(&message, (void*)response.data(), response.size(), NULL, NULL);
+    result = zmq_msg_send(&message, socket, 0);
+    if (result != 0) {
+      string details;
+      details += "Unable to send zmq message: ";
+      details += zmq_strerror(zmq_errno());
+      BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
+    }
   }
 }
