@@ -152,6 +152,7 @@ void TObject2Json::startZmqServer(string endpoint)
       details += zmq_strerror(zmq_errno());
       BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
     }
+    QcInfoLogger::GetInstance() << "Debug: ZMQ server: sent back " << size << " bytes" << infologger::endm;
     zmq_msg_close(&messageRep);
   }
 }
