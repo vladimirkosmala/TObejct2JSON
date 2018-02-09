@@ -23,7 +23,7 @@ project(Monitoring)
 
 # Load some basic macros which are needed later on
 include(O2Utils)
-include(TObejct2JsonDependencies)
+include(TObject2JsonDependencies)
 
 # Set the default build type to "RelWithDebInfo"
 if(NOT CMAKE_BUILD_TYPE)
