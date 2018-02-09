@@ -1,10 +1,20 @@
+// Copyright CERN and copyright holders of ALICE O2. This software is
+// distributed under the terms of the GNU General Public License v3 (GPL
+// Version 3), copied verbatim in the file "COPYING".
+//
+// See http://alice-o2.web.cern.ch/license for full licensing information.
+//
+// In applying this license CERN does not waive the privileges and immunities
+// granted to it by virtue of its status as an Intergovernmental Organization
+// or submit itself to any jurisdiction.
+
 ///
 /// \file   TObejct2JSON.cpp
 /// \author Vladimir Kosmala
 ///
 
 // TObject2JSON
-#include "TObject2JSON/TObject2JSON.hpp"
+#include "TObject2JSON/TObject2JSON.h"
 
 // QualityControl
 #include "QualityControl/MonitorObject.h"
@@ -26,11 +36,14 @@ using namespace std;
 using namespace o2::quality_control::core;
 using namespace AliceO2::Common;
 
+namespace o2 {
+namespace quality_control {
+
 void TObject2JSON::connectMySQLClient(string host, string databse, string username, string password)
 {
-  sqlClient = make_unique<MySqlDatabase>();
+  mSqlClient = make_unique<MySqlDatabase>();
   try {
-    sqlClient->connect(host, databse, username, password);
+    mSqlClient->connect(host, databse, username, password);
   } catch(FatalException err) {
     string details;
     details += "Impossible to connect to mysql server: ";
@@ -41,11 +54,11 @@ void TObject2JSON::connectMySQLClient(string host, string databse, string userna
 
 string TObject2JSON::retrieveMonitoObjectJSON(string agentName, string objectName)
 {
-  if (sqlClient == nullptr) {
+  if (mSqlClient == nullptr) {
     BOOST_THROW_EXCEPTION(FatalException() << errinfo_details("Can't retrieve object without beeing connected"));
   }
 
-  unique_ptr<MonitorObject> monitor(sqlClient->retrieve(agentName, objectName));
+  unique_ptr<MonitorObject> monitor(mSqlClient->retrieve(agentName, objectName));
   unique_ptr<TObject> obj(monitor->getObject());
   monitor->setIsOwner(false); // we will manage the internal TObject from now
   TString json = TBufferJSON::ConvertToJSON(obj.get());
@@ -131,3 +144,6 @@ void TObject2JSON::startZmqServer(string endpoint)
     }
   }
 }
+
+} // namespace o2
+} // namespace quality_control
