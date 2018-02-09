@@ -124,12 +124,11 @@ void TObject2Json::startZmqServer(string endpoint)
 
   QcInfoLogger::GetInstance() << "Info: ZMQ server: listening requests..." << infologger::endm;
   while(1) {
-    zmq_msg_t message;
-
     // Wait for next request from client inside a zmq message
-    zmq_msg_init(&message);
-    error = zmq_msg_recv(&message, socket, 0);
-    if (error) {
+    zmq_msg_t messageReq;
+    zmq_msg_init(&messageReq);
+    int size = zmq_msg_recv(&messageReq, socket, 0);
+    if (size == -1) {
       string details;
       details += "Unable to receive zmq message: ";
       details += zmq_strerror(zmq_errno());
@@ -137,18 +136,22 @@ void TObject2Json::startZmqServer(string endpoint)
     }
 
     // Process message
-    string request((const char*)zmq_msg_data(&message), zmq_msg_size(&message));
+    string request((const char*)zmq_msg_data(&messageReq), size);
+    zmq_msg_close(&messageReq);
     string response = handleRequest(request);
 
     // Send back response inside a zmq message
-    zmq_msg_init_data(&message, (void*)response.data(), response.size(), NULL, NULL);
-    error = zmq_msg_send(&message, socket, 0);
+    zmq_msg_t messageRep;
+    zmq_msg_init(&messageRep);
+    memcpy(zmq_msg_data(&messageRep), response.data(), response.size());
+    error = zmq_msg_send(&messageRep, socket, 0);
     if (error) {
       string details;
       details += "Unable to send zmq message: ";
       details += zmq_strerror(zmq_errno());
       BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
     }
+    zmq_msg_close(&messageRep);
   }
 }
 

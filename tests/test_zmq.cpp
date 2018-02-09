@@ -32,34 +32,39 @@ int main (void) {
 
     // Send request
     string request = "ping";
-    zmq_msg_t message;
-    error = zmq_msg_init_data(&message, (void*)request.data(), request.size(), NULL, NULL);
+    zmq_msg_t messageReq;
+    error = zmq_msg_init_size(&messageReq, request.size());
     if (error) {
       string details;
       details += "Unable to init zmq message: ";
       details += zmq_strerror(zmq_errno());
       BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
     }
+    memcpy(zmq_msg_data(&messageReq), request.data(), request.size());
 
     QcInfoLogger::GetInstance() << "Sending request: " << request << infologger::endm;
-    error = zmq_msg_send(&message, socket, 0);
+    error = zmq_msg_send(&messageReq, socket, 0);
     if (error) {
       string details;
       details += "Unable to send zmq message: ";
       details += zmq_strerror(zmq_errno());
       BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
     }
+    zmq_msg_close(&messageReq);
 
     // Answer
-    error = zmq_msg_recv(&message, socket, 0);
-    if (error) {
+    zmq_msg_t messageRep;
+    zmq_msg_init(&messageRep);
+    int size = zmq_msg_recv(&messageRep, socket, 0);
+    if (size == -1) {
       string details;
-      details += "Unable to connect zmq: ";
+      details += "Unable to receive zmq message: ";
       details += zmq_strerror(zmq_errno());
       BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
     }
-    string response((const char*)zmq_msg_data(&message), zmq_msg_size(&message));
+    string response((const char*)zmq_msg_data(&messageRep), size);
     QcInfoLogger::GetInstance() << "Received answer: " << response << infologger::endm;
+    zmq_msg_close(&messageRep);
 
     // Close socekt
     zmq_close(socket);
