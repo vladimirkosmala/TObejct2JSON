@@ -62,7 +62,7 @@ int main (void) {
       details += zmq_strerror(zmq_errno());
       BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
     }
-    string response((const char*)zmq_msg_data(&messageRep), size);
+    string response((const char*)zmq_msg_data(&messageRep), size + 1);
     QcInfoLogger::GetInstance() << "Received answer: " << response << infologger::endm;
     zmq_msg_close(&messageRep);
 
