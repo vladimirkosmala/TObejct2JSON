@@ -31,7 +31,7 @@
 #include "Common/Exceptions.h"
 
 // ROOT
-#include "TBufferJson.h"
+#include "TBufferJSON.h"
 
 using namespace std;
 using namespace o2::quality_control::core;
