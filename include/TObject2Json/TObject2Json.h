@@ -24,15 +24,23 @@ using o2::quality_control::repository::MySqlDatabase;
 namespace o2 {
 namespace quality_control {
 
-constexpr int numberOfContextThread = 1;
-
+/// \brief ZeroMQ/JSON server exposing TObject QualityControl data
+///
+/// \author Vladimir Kosmala
 class TObject2Json
 {
   public:
+    /// \brief Connect to MySQL using the QualityControl MySqlDatabase class
     void connectMySQLClient(std::string host, std::string databse, std::string username, std::string password);
-    std::string retrieveMonitoObjectJson(std::string agentName, std::string objectName);
-    std::string handleRequest(std::string message);
+
+    /// \brief Start the ZMQ interface to communicate with this server
     void startZmqServer(std::string endpoint);
+
+    /// \brief Get a TObject from database and returns the JSON equivalent
+    std::string retrieveMonitorObjectJson(std::string agentName, std::string objectName);
+
+    /// \brief Handle request sent to the ZeroMQ server
+    std::string handleRequest(std::string message);
 
   private:
     std::unique_ptr<MySqlDatabase> mSqlClient;

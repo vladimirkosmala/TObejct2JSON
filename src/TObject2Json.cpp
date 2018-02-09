@@ -52,7 +52,7 @@ void TObject2Json::connectMySQLClient(string host, string databse, string userna
   }
 }
 
-string TObject2Json::retrieveMonitoObjectJson(string agentName, string objectName)
+string TObject2Json::retrieveMonitorObjectJson(string agentName, string objectName)
 {
   if (mSqlClient == nullptr) {
     BOOST_THROW_EXCEPTION(FatalException() << errinfo_details("Can't retrieve object without beeing connected"));
@@ -88,7 +88,7 @@ string TObject2Json::handleRequest(string request)
     string agentName = parts[1];
     string objectName = parts[2];
     try {
-      return retrieveMonitoObjectJson(agentName, objectName);
+      return retrieveMonitorObjectJson(agentName, objectName);
     } catch (AliceO2::Common::DatabaseException &err) {
       if (*boost::get_error_info<errinfo_db_errno>(err) == 1146) {
         // In case the table does no exist means the agent does not exist (agent = table)
