@@ -2,6 +2,9 @@
 #include <string>
 #include <iostream>
 
+// ZMQ
+#include <zmq.h>
+
 // O2
 #include "Common/Exceptions.h"
 

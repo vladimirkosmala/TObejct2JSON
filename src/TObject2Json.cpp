@@ -109,13 +109,13 @@ string TObject2Json::handleRequest(string request)
 
 void TObject2Json::startZmqServer(string endpoint)
 {
-  int result;
+  int error;
   void *socket = zmq_ctx_new();
   void *responder = zmq_socket(socket, ZMQ_REP);
 
   QcInfoLogger::GetInstance() << "Info: ZMQ server: Binding" << infologger::endm;
-  result = zmq_bind(responder, endpoint.data());
-  if (result != 0) {
+  error = zmq_bind(responder, endpoint.data());
+  if (error) {
     string details;
     details += "Unable to bind zmq socket: ";
     details += zmq_strerror(zmq_errno());
@@ -128,7 +128,13 @@ void TObject2Json::startZmqServer(string endpoint)
 
     // Wait for next request from client inside a zmq message
     zmq_msg_init(&message);
-    zmq_msg_recv(&message, socket, 0);
+    error = zmq_msg_recv(&message, socket, 0);
+    if (error) {
+      string details;
+      details += "Unable to receive zmq message: ";
+      details += zmq_strerror(zmq_errno());
+      BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
+    }
 
     // Process message
     string request((const char*)zmq_msg_data(&message), zmq_msg_size(&message));
@@ -136,8 +142,8 @@ void TObject2Json::startZmqServer(string endpoint)
 
     // Send back response inside a zmq message
     zmq_msg_init_data(&message, (void*)response.data(), response.size(), NULL, NULL);
-    result = zmq_msg_send(&message, socket, 0);
-    if (result != 0) {
+    error = zmq_msg_send(&message, socket, 0);
+    if (error) {
       string details;
       details += "Unable to send zmq message: ";
       details += zmq_strerror(zmq_errno());
