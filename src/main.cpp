@@ -9,7 +9,7 @@
 // TObject2JSON
 #include "TObject2JSON/TObject2JSON.h"
 
-using o2::quality_control;
+using o2::quality_control::TObject2JSON;
 
 // Run main() only if running outside of ROOT interpreter
 // https://root.cern.ch/cint
