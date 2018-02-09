@@ -7,7 +7,7 @@
 #include "Common/Exceptions.h"
 
 // TObject2JSON
-#include "TObject2JSON/TObject2JSON.hpp"
+#include "TObject2JSON/TObject2JSON.h"
 
 // Run main() only if running outside of ROOT interpreter
 // https://root.cern.ch/cint
