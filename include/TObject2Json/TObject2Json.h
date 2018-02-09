@@ -43,6 +43,7 @@ class TObject2Json
     std::string handleRequest(std::string message);
 
   private:
+    /// \brief MySQL client instance from QualityControl framework
     std::unique_ptr<MySqlDatabase> mSqlClient;
 };
 
