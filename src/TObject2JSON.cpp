@@ -9,12 +9,12 @@
 // or submit itself to any jurisdiction.
 
 ///
-/// \file   TObejct2JSON.cpp
+/// \file   TObejct2Json.cpp
 /// \author Vladimir Kosmala
 ///
 
-// TObject2JSON
-#include "TObject2JSON/TObject2JSON.h"
+// TObject2Json
+#include "TObject2Json/TObject2Json.h"
 
 // QualityControl
 #include "QualityControl/MonitorObject.h"
@@ -30,7 +30,7 @@
 #include "Common/Exceptions.h"
 
 // ROOT
-#include "TBufferJSON.h"
+#include "TBufferJson.h"
 
 using namespace std;
 using namespace o2::quality_control::core;
@@ -39,7 +39,7 @@ using namespace AliceO2::Common;
 namespace o2 {
 namespace quality_control {
 
-void TObject2JSON::connectMySQLClient(string host, string databse, string username, string password)
+void TObject2Json::connectMySQLClient(string host, string databse, string username, string password)
 {
   mSqlClient = make_unique<MySqlDatabase>();
   try {
@@ -52,7 +52,7 @@ void TObject2JSON::connectMySQLClient(string host, string databse, string userna
   }
 }
 
-string TObject2JSON::retrieveMonitoObjectJSON(string agentName, string objectName)
+string TObject2Json::retrieveMonitoObjectJson(string agentName, string objectName)
 {
   if (mSqlClient == nullptr) {
     BOOST_THROW_EXCEPTION(FatalException() << errinfo_details("Can't retrieve object without beeing connected"));
@@ -65,7 +65,7 @@ string TObject2JSON::retrieveMonitoObjectJSON(string agentName, string objectNam
   return json.Data();
 }
 
-string TObject2JSON::handleRequest(string request)
+string TObject2Json::handleRequest(string request)
 {
   cout << "Debug: Received request: " << request << endl;
 
@@ -88,7 +88,7 @@ string TObject2JSON::handleRequest(string request)
     string agentName = parts[1];
     string objectName = parts[2];
     try {
-      return retrieveMonitoObjectJSON(agentName, objectName);
+      return retrieveMonitoObjectJson(agentName, objectName);
     } catch (AliceO2::Common::DatabaseException &err) {
       if (*boost::get_error_info<errinfo_db_errno>(err) == 1146) {
         // In case the table does no exist means the agent does not exist (agent = table)
@@ -106,7 +106,7 @@ string TObject2JSON::handleRequest(string request)
   }
 }
 
-void TObject2JSON::startZmqServer(string endpoint)
+void TObject2Json::startZmqServer(string endpoint)
 {
   int result;
   void *socket = zmq_ctx_new();

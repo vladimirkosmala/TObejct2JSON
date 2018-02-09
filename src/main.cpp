@@ -6,10 +6,10 @@
 // O2
 #include "Common/Exceptions.h"
 
-// TObject2JSON
-#include "TObject2JSON/TObject2JSON.h"
+// TObject2Json
+#include "TObject2Json/TObject2Json.h"
 
-using o2::quality_control::TObject2JSON;
+using o2::quality_control::TObject2Json;
 
 // Run main() only if running outside of ROOT interpreter
 // https://root.cern.ch/cint
@@ -17,7 +17,7 @@ using o2::quality_control::TObject2JSON;
 int main()
 {
   try {
-    TObject2JSON server;
+    TObject2Json server;
     server.connectMySQLClient("127.0.0.1", "quality_control", "root", "");
     server.startZmqServer("tcp://127.0.0.1:5555");
   } catch (boost::exception & exc) {

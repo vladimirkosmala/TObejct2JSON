@@ -23,7 +23,7 @@ project(Monitoring)
 
 # Load some basic macros which are needed later on
 include(O2Utils)
-include(TObejct2JSONDependencies)
+include(TObejct2JsonDependencies)
 
 # Set the default build type to "RelWithDebInfo"
 if(NOT CMAKE_BUILD_TYPE)
@@ -62,7 +62,7 @@ add_subdirectory(doc)
 # Module, library and executable definition
 ####################################
 
-set(MODULE_NAME "TObject2JSON")
+set(MODULE_NAME "TObject2Json")
 
 O2_SETUP(NAME ${MODULE_NAME})
 
@@ -75,7 +75,7 @@ configure_file("include/${MODULE_NAME}/Version.h.in"
 
 O2_GENERATE_EXECUTABLE(
         EXE_NAME "tobject2json"
-        SOURCES "src/main" "src/TObject2JSON.cpp"
+        SOURCES "src/main" "src/TObject2Json.cpp"
         BUCKET_NAME "o2_tobject2json"
         )
 
