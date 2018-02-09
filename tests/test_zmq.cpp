@@ -33,8 +33,14 @@ int main (void) {
     // Send request
     string request = "ping";
     zmq_msg_t message;
-    zmq_msg_init(&message);
-    zmq_msg_init_data(&message, (void*)request.data(), request.size(), NULL, NULL);
+    error = zmq_msg_init_data(&message, (void*)request.data(), request.size(), NULL, NULL);
+    if (error) {
+      string details;
+      details += "Unable to init zmq message: ";
+      details += zmq_strerror(zmq_errno());
+      BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
+    }
+
     QcInfoLogger::GetInstance() << "Sending request: " << request << infologger::endm;
     error = zmq_msg_send(&message, socket, 0);
     if (error) {

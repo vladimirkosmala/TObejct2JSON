@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
   } catch (boost::exception & exc) {
     std::string diagnostic = boost::current_exception_diagnostic_information();
     QcInfoLogger::GetInstance() << "Unexpected exception, diagnostic information follows:\n" << diagnostic << infologger::endm;
+    return 1;
     if (diagnostic == "No diagnostic information available.") {
       throw;
     }
