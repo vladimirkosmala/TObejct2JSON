@@ -143,7 +143,7 @@ void TObject2Json::startZmqServer(string endpoint)
 
     // Send back response inside a zmq message
     zmq_msg_t messageRep;
-    zmq_msg_init(&messageRep);
+    zmq_msg_init_size(&messageRep, response.size());
     memcpy(zmq_msg_data(&messageRep), response.data(), response.size());
     size = zmq_msg_send(&messageRep, socket, 0);
     if (size == -1) {
