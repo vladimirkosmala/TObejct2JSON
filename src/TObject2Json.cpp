@@ -110,11 +110,11 @@ string TObject2Json::handleRequest(string request)
 void TObject2Json::startZmqServer(string endpoint)
 {
   int error;
-  void *socket = zmq_ctx_new();
-  void *responder = zmq_socket(socket, ZMQ_REP);
+  void *context = zmq_ctx_new();
+  void *socket = zmq_socket(context, ZMQ_REP);
 
   QcInfoLogger::GetInstance() << "Info: ZMQ server: Binding" << infologger::endm;
-  error = zmq_bind(responder, endpoint.data());
+  error = zmq_bind(socket, endpoint.data());
   if (error) {
     string details;
     details += "Unable to bind zmq socket: ";
