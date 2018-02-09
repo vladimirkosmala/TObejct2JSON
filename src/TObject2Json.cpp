@@ -139,7 +139,7 @@ void TObject2Json::startZmqServer(string endpoint)
     string request((const char*)zmq_msg_data(&messageReq), size);
     zmq_msg_close(&messageReq);
     string response = handleRequest(request);
-    QcInfoLogger::GetInstance() << "Info: ZMQ server: sending back " << response << infologger::endm;
+    QcInfoLogger::GetInstance() << "Debug: ZMQ server: sending back " << response << infologger::endm;
 
     // Send back response inside a zmq message
     zmq_msg_t messageRep;

@@ -62,8 +62,8 @@ int main (void) {
       details += zmq_strerror(zmq_errno());
       BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
     }
-    string response((const char*)zmq_msg_data(&messageRep), size + 1);
-    QcInfoLogger::GetInstance() << "Received answer: " << response << infologger::endm;
+    string response((const char*)zmq_msg_data(&messageRep), size);
+    QcInfoLogger::GetInstance() << "Received answer: " << response << " of size " << size << infologger::endm;
     zmq_msg_close(&messageRep);
 
     // Close socekt

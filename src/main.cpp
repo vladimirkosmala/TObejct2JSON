@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   // Arguments parsing
   if (argc != 6) {
     QcInfoLogger::GetInstance() << "Info: no configuration passed, default used. "
-                                << "Usage: cmd [ip dbName user pass zmqURI]" << infologger::endm;
+                                << "Usage: cmd [dbIp dbName dbUser dbPass zmqURI]" << infologger::endm;
     mySqlIp = "127.0.0.1";
     mySqlDataBase = "quality_control";
     mySqlUser = "root";
