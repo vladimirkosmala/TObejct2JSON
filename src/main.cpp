@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     server.startZmqServer(zmqEndpoint);
   } catch (boost::exception & exc) {
     std::string diagnostic = boost::current_exception_diagnostic_information();
-    std::cerr << "Unexpected exception, diagnostic information follows:\n" << diagnostic << std::endl;
+    QcInfoLogger::GetInstance() << "Unexpected exception, diagnostic information follows:\n" << diagnostic << infologger::endm;
     if (diagnostic == "No diagnostic information available.") {
       throw;
     }
