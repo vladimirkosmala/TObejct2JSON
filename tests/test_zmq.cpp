@@ -16,13 +16,13 @@ using namespace AliceO2::Common;
 using namespace o2::quality_control::core;
 
 int main (void) {
-  int error;
+  int error, size;
 
   try {
     // Open a socket
     void *context = zmq_ctx_new();
     void *socket = zmq_socket(context, ZMQ_REQ);
-    error = zmq_connect(socket, "tcp://localhost:5555");
+    error = zmq_connect(socket, "tcp://127.0.0.1:5555");
     if (error) {
       string details;
       details += "Unable to connect zmq: ";
@@ -43,8 +43,8 @@ int main (void) {
     memcpy(zmq_msg_data(&messageReq), request.data(), request.size());
 
     QcInfoLogger::GetInstance() << "Sending request: " << request << infologger::endm;
-    error = zmq_msg_send(&messageReq, socket, 0);
-    if (error) {
+    size = zmq_msg_send(&messageReq, socket, 0);
+    if (size == -1) {
       string details;
       details += "Unable to send zmq message: ";
       details += zmq_strerror(zmq_errno());
@@ -55,7 +55,7 @@ int main (void) {
     // Answer
     zmq_msg_t messageRep;
     zmq_msg_init(&messageRep);
-    int size = zmq_msg_recv(&messageRep, socket, 0);
+    size = zmq_msg_recv(&messageRep, socket, 0);
     if (size == -1) {
       string details;
       details += "Unable to receive zmq message: ";

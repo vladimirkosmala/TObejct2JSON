@@ -109,7 +109,7 @@ string TObject2Json::handleRequest(string request)
 
 void TObject2Json::startZmqServer(string endpoint)
 {
-  int error;
+  int error, size;
   void *context = zmq_ctx_new();
   void *socket = zmq_socket(context, ZMQ_REP);
 
@@ -127,7 +127,7 @@ void TObject2Json::startZmqServer(string endpoint)
     // Wait for next request from client inside a zmq message
     zmq_msg_t messageReq;
     zmq_msg_init(&messageReq);
-    int size = zmq_msg_recv(&messageReq, socket, 0);
+    size = zmq_msg_recv(&messageReq, socket, 0);
     if (size == -1) {
       string details;
       details += "Unable to receive zmq message: ";
@@ -144,8 +144,8 @@ void TObject2Json::startZmqServer(string endpoint)
     zmq_msg_t messageRep;
     zmq_msg_init(&messageRep);
     memcpy(zmq_msg_data(&messageRep), response.data(), response.size());
-    error = zmq_msg_send(&messageRep, socket, 0);
-    if (error) {
+    size = zmq_msg_send(&messageRep, socket, 0);
+    if (size == -1) {
       string details;
       details += "Unable to send zmq message: ";
       details += zmq_strerror(zmq_errno());
