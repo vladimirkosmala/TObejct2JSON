@@ -2,39 +2,92 @@
 #include <string>
 #include <iostream>
 
+// ZMQ
+#include <zmq.h>
+
 // O2
 #include "Common/Exceptions.h"
 
+// QualityControl
+#include "QualityControl/QcInfoLogger.h"
+
 using namespace std;
 using namespace AliceO2::Common;
+using namespace o2::quality_control::core;
 
-int main (void) {
-  // Open a socket
-  void *context = zmq_ctx_new();
-  void *socket = zmq_socket(context, ZMQ_REQ);
-  zmq_connect(socket, "tcp://localhost:5555");
+int main (int argc, char *argv[]) {
+  int error, size;
+  std::string zmqEndpoint;
 
-  // Send request
-  string request = "ping";
-  zmq_msg_t message;
-  zmq_msg_init(&message);
-  zmq_msg_init_data(&message, (void*)request.data(), request.size(), NULL, NULL);
-  std::cout << "Sending request: " << request << std::endl;
-  int result = zmq_msg_send(&message, socket, 0);
-  if (result != 0) {
-    string details;
-    details += "Unable to send zmq message: ";
-    details += zmq_strerror(zmq_errno());
-    BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
+  // Arguments parsing
+  if (argc != 2) {
+    QcInfoLogger::GetInstance() << "Info: no configuration passed, default used. "
+                                << "Usage: cmd [zmqURI]" << infologger::endm;
+    zmqEndpoint = "tcp://127.0.0.1:5555";
+  } else {
+    zmqEndpoint = argv[1];
   }
 
-  // Answer
-  zmq_msg_recv(&message, socket, 0);
-  string response((const char*)zmq_msg_data(&message), zmq_msg_size(&message));
-  std::cout << "Received answer: " << response << std::endl;
+  try {
+    // Open a socket
+    void *context = zmq_ctx_new();
+    void *socket = zmq_socket(context, ZMQ_REQ);
+    error = zmq_connect(socket, zmqEndpoint.data());
+    if (error) {
+      string details;
+      details += "Unable to connect zmq: ";
+      details += zmq_strerror(zmq_errno());
+      BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
+    }
 
-  // Close socekt
-  zmq_close(socket);
-  zmq_ctx_destroy(context);
+    // Send request
+    string request = "ping";
+    zmq_msg_t messageReq;
+    error = zmq_msg_init_size(&messageReq, request.size());
+    if (error) {
+      string details;
+      details += "Unable to init zmq message: ";
+      details += zmq_strerror(zmq_errno());
+      BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
+    }
+    memcpy(zmq_msg_data(&messageReq), request.data(), request.size());
+
+    QcInfoLogger::GetInstance() << "Sending request: " << request << infologger::endm;
+    size = zmq_msg_send(&messageReq, socket, 0);
+    if (size == -1) {
+      string details;
+      details += "Unable to send zmq message: ";
+      details += zmq_strerror(zmq_errno());
+      BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
+    }
+    zmq_msg_close(&messageReq);
+
+    // Answer
+    zmq_msg_t messageRep;
+    zmq_msg_init(&messageRep);
+    size = zmq_msg_recv(&messageRep, socket, 0);
+    if (size == -1) {
+      string details;
+      details += "Unable to receive zmq message: ";
+      details += zmq_strerror(zmq_errno());
+      BOOST_THROW_EXCEPTION(FatalException() << errinfo_details(details));
+    }
+    string response((const char*)zmq_msg_data(&messageRep), size);
+    QcInfoLogger::GetInstance() << "Received answer: " << response << " of size " << size << infologger::endm;
+    zmq_msg_close(&messageRep);
+
+    // Close socekt
+    zmq_close(socket);
+    zmq_ctx_destroy(context);
+
+  } catch (boost::exception & exc) {
+     std::string diagnostic = boost::current_exception_diagnostic_information();
+     QcInfoLogger::GetInstance() << "Unexpected exception, diagnostic information follows:\n" << diagnostic << infologger::endm;
+     return 1;
+     if (diagnostic == "No diagnostic information available.") {
+       throw;
+     }
+   }
+
   return 0;
 }
